@@ -11,3 +11,7 @@ export function loadImage(url: string) {
     }
   });
 }
+
+export function loadLevel(name: string) {
+  return fetch(`/levels/${name}.json`).then(r => r.json());
+}
