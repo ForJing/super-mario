@@ -1,7 +1,11 @@
 class SpriteSheet {
   tiles: Map<string, HTMLCanvasElement>;
 
-  constructor(public image: HTMLImageElement, public width, public height) {
+  constructor(
+    public image: HTMLImageElement,
+    public width: number,
+    public height: number
+  ) {
     this.tiles = new Map();
   }
 
