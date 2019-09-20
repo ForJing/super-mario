@@ -1,19 +1,7 @@
 import SpriteSheet from "./SpriteSheet";
 import { loadImage, loadLevel } from "./loaders";
-
-function drawBackground(
-  background,
-  context: CanvasRenderingContext2D,
-  sprites
-) {
-  background.ranges.forEach(([x1, x2, y1, y2]) => {
-    for (let x = x1; x < x2; x++) {
-      for (let y = y1; y < y2; y++) {
-        sprites.drawTile(background.tile, context, x, y);
-      }
-    }
-  });
-}
+import Compositor from "./Compositor";
+import { createBackgroundLayer, createSpriteLayer } from "./layers";
 
 const canvas = document.getElementById("screen") as HTMLCanvasElement;
 const context = canvas.getContext("2d");
@@ -40,17 +28,21 @@ Promise.all([
   loadBackGroundSpirtes(),
   loadLevel("1-1")
 ]).then(([marioSprite, sprites, level]) => {
-  level.backgrounds.forEach(background => {
-    drawBackground(background, context, sprites);
-  });
+  const comp = new Compositor();
+
+  const backgroundLayer = createBackgroundLayer(level.backgrounds, sprites);
+  comp.layers.push(backgroundLayer);
 
   const pos = {
     x: 64,
     y: 64
   };
 
+  const spriteLayer = createSpriteLayer(marioSprite, pos);
+  comp.layers.push(spriteLayer);
+
   function update() {
-    marioSprite.draw("idle", context, pos.x, pos.y);
+    comp.draw(context);
     pos.x += 2;
     pos.y += 2;
     requestAnimationFrame(update);
