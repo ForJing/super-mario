@@ -9,7 +9,7 @@ class Entity {
     this.vel = new Vec2(0, 0);
   }
 
-  update() {}
+  update(time) {}
   draw(context: CanvasRenderingContext2D) {}
 }
 

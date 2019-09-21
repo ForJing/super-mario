@@ -12,20 +12,34 @@ Promise.all([createMario(), loadBackGroundSpirtes(), loadLevel("1-1")]).then(
     const comp = new Compositor();
 
     const backgroundLayer = createBackgroundLayer(level.backgrounds, sprites);
-    comp.layers.push(backgroundLayer);
+    // comp.layers.push(backgroundLayer);
 
-    const gravity = 0.5;
+    const gravity = 30;
+
+    mario.pos.set(64, 180);
+    mario.vel.set(200, -600);
 
     const spriteLayer = createSpriteLayer(mario);
     comp.layers.push(spriteLayer);
 
-    function update() {
+    let deltaTime = 0;
+    let lastTime = 0;
+
+    function update(time) {
+      deltaTime = (time - lastTime) / 1000;
+      console.log(deltaTime);
+
       comp.draw(context);
-      mario.update();
+      mario.update(deltaTime);
+      console.log(mario.pos);
       mario.vel.y += gravity;
+      // setTimeout(update, 1000 / 1);
       requestAnimationFrame(update);
+
+
+      lastTime = time; 
     }
 
-    update();
+    update(0);
   }
 );
