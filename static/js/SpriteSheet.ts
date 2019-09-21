@@ -49,6 +49,8 @@ class SpriteSheet {
   ) {
     this.draw(name, context, x * this.width, y * this.height);
   }
+
+  update() {}
 }
 
 export default SpriteSheet;

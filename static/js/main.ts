@@ -1,51 +1,31 @@
-import SpriteSheet from "./SpriteSheet";
 import { loadLevel } from "./loaders";
 import Compositor from "./Compositor";
 import { createBackgroundLayer, createSpriteLayer } from "./layers";
-import { loadMarioSprite, loadBackGroundSpirtes } from "./sprites";
+import { loadBackGroundSpirtes } from "./sprites";
+import { createMario } from "./entities";
 
 const canvas = document.getElementById("screen") as HTMLCanvasElement;
 const context = canvas.getContext("2d");
 
-class Vec2 {
-  constructor(public x, public y) {}
-}
+Promise.all([createMario(), loadBackGroundSpirtes(), loadLevel("1-1")]).then(
+  ([mario, sprites, level]) => {
+    const comp = new Compositor();
 
-class Entity {
-  pos: Vec2;
-  vel: Vec2;
+    const backgroundLayer = createBackgroundLayer(level.backgrounds, sprites);
+    comp.layers.push(backgroundLayer);
 
-  constructor() {
-    this.pos = new Vec2(0, 0);
-    this.vel = new Vec2(0, 0);
+    const gravity = 0.5;
+
+    const spriteLayer = createSpriteLayer(mario);
+    comp.layers.push(spriteLayer);
+
+    function update() {
+      comp.draw(context);
+      mario.update();
+      mario.vel.y += gravity;
+      requestAnimationFrame(update);
+    }
+
+    update();
   }
-}
-
-Promise.all([
-  loadMarioSprite(),
-  loadBackGroundSpirtes(),
-  loadLevel("1-1")
-]).then(([marioSprite, sprites, level]) => {
-  const comp = new Compositor();
-
-  const backgroundLayer = createBackgroundLayer(level.backgrounds, sprites);
-  comp.layers.push(backgroundLayer);
-
-  const pos = new Vec2(64, 180);
-  const vel = new Vec2(2, -10);
-
-  const gravity = 0.5;
-
-  const spriteLayer = createSpriteLayer(marioSprite, pos);
-  comp.layers.push(spriteLayer);
-
-  function update() {
-    comp.draw(context);
-    pos.x += vel.x;
-    pos.y += vel.y;
-    vel.y += gravity;
-    requestAnimationFrame(update);
-  }
-
-  update();
-});
+);
