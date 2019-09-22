@@ -1,17 +1,15 @@
 import { loadMarioSprite } from "./sprites";
-import Entity from "./Entity";
+import Entity, { Trait } from "./Entity";
+import Velocity from "./traits/Velocity";
 
 export function createMario() {
-  return loadMarioSprite().then(sprites => {
+  return loadMarioSprite().then(sprite => {
     const mario = new Entity();
 
-    mario.update = function updateMario(deltaTime) {
-      this.pos.x += this.vel.x * deltaTime;
-      this.pos.y += this.vel.y * deltaTime;
-    };
+    mario.addTrait(new Velocity());
 
     mario.draw = function drawMario(context) {
-      sprites.draw("idle", context, this.pos.x, this.pos.y);
+      sprite.draw("idle", context, this.pos.x, this.pos.y);
     };
     return mario;
   });
